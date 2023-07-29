@@ -42,3 +42,26 @@ function checkLogin(){
   }
 }
 
+// 渲染用户名
+function renderUserName(){
+  // 读取并渲染用户名
+  const username = localStorage.getItem('user-name')
+  console.log(username)
+  document.querySelector("#user").innerText =username
+}
+
+// 退出登录
+/* 
+ 退出登录函数----绑定点击事件 ---删除用户名和token
+*/
+
+function registerLogout(){
+   document.querySelector('#logout').addEventListener('click',function(){
+    //  清除用户名和token
+    localStorage.removeItem('user-name')
+    localStorage.removeItem('user-token')
+    // 跳转到登录页面
+    location.href='./login.html'
+   })
+}
+
