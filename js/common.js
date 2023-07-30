@@ -16,6 +16,51 @@
 axios.defaults.baseURL = 'http://ajax-api.itheima.net'
 
 
+// 添加请求拦截器 --请求发送之前
+axios.interceptors.request.use(function (config) {
+  // console.log("发送请求之前")
+  // 在发送请求之前做些什么  请求头携带token
+  // 统一设置token
+  const token = localStorage.getItem('user-token')
+  // console.log(config.headers,"config")
+  if(token){
+    config.headers['Authorization'] = token
+  }
+  return config;
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
+
+// 添加响应拦截器  数据响应回来之后 
+// 处理token失效  数据剥离
+axios.interceptors.response.use(function (response) {
+  // 2xx 范围内的状态码都会触发该函数。
+  // 对响应数据做点什么   数据剥离
+  // 剥离data属性---修改数据的使用(登录注册 首页)
+  // console.log(response,0)
+  return response.data;
+}, function (error) {
+  console.dir(error)
+  if(error.response.status === 401){
+    // 1.删除本地缓存中的信息
+    localStorage.removeItem('user-name')
+    localStorage.removeItem('user-token')
+
+    tip('请重新登录')
+
+    // 返回登录页
+    setTimeout(()=>{
+      location.href = './login.html'
+    })
+
+  }
+  // 超出 2xx 范围的状态码都会触发该函数。
+  // 对响应错误做点什么   处理token失效
+  return Promise.reject(error);
+});
+
+
 function tip(msg){
   const toastDom = document.querySelector("#myToast")
   const toast = new bootstrap.Toast(toastDom)
@@ -65,3 +110,24 @@ function registerLogout(){
    })
 }
 
+// 首页--数据统计
+// 调用接口---渲染数据
+async function getData(){
+  // 读取本地缓存中的token
+  const token = localStorage.getItem('user-token')
+  // 调用接口
+ let res = await axios({
+    url:"/dashboard",
+    // 请求头中携带token
+    // headers:{
+    //   Authorization:token
+    // }
+  })
+  console.log(res,"数据")
+  const overview = res.data.overview
+
+  //  渲染数据
+  Object.keys(overview).forEach(key=>{
+    document.querySelector(`.${key}`).innerText = overview[key]
+  })
+}

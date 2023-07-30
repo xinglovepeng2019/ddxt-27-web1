@@ -112,9 +112,9 @@
                  console.log(res)
                
                   //  将个人信息 和token令牌 存储到本地
-                  localStorage.setItem("user-token",res.data.data.token)
-                  localStorage.setItem("user-name",res.data.data.username)
-                  tip(res.data.message)
+                  localStorage.setItem("user-token",res.data.token)
+                  localStorage.setItem("user-name",res.data.username)
+                  tip(res.message)
                   location.href='./index.html'
               }
               catch(err){
