@@ -61,6 +61,7 @@ axios.interceptors.response.use(function (response) {
 });
 
 
+// 提示
 function tip(msg){
   const toastDom = document.querySelector("#myToast")
   const toast = new bootstrap.Toast(toastDom)
@@ -124,10 +125,15 @@ async function getData(){
     // }
   })
   console.log(res,"数据")
-  const overview = res.data.overview
+  // 通过解构方式  简化数据取值
+  const {overview,groupData,provinceData,salaryData,year  } = res.data
 
   //  渲染数据
   Object.keys(overview).forEach(key=>{
     document.querySelector(`.${key}`).innerText = overview[key]
   })
+
+  // 薪资走势
+  renderYearSalary(year)
+
 }
